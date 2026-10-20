@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f5f7fb" />
+  <title>Telecom Project — реестр объектов</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#" aria-label="Telecom Project, главная">
+        <span class="brand-mark"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4 7 28h4l5-14 5 14h4L16 4Z"/><path d="M11 19h10M13 14h6"/></svg></span>
+        <span class="brand-copy"><strong>telecom<span>.</span></strong><small>PROJECT OFFICE</small></span>
+      </a>
+      <div class="workspace-label">РАБОЧЕЕ ПРОСТРАНСТВО</div>
+      <nav class="side-nav" aria-label="Основная навигация">
+        <a class="nav-link active" href="#overview"><span class="nav-icon">▦</span> Обзор <span class="nav-active-dot"></span></a>
+        <a class="nav-link" href="#registry"><span class="nav-icon">⌕</span> Реестр объектов</a>
+        <a class="nav-link" href="#projects"><span class="nav-icon">◫</span> Проекты</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="side-help"><span class="help-icon">i</span><div><strong>Как это работает</strong><small>Загрузите таблицу и найдите историю по адресу</small></div><span class="arrow">↗</span></div>
+        <div class="user-card"><div class="avatar">ТП</div><div><strong>Мой кабинет</strong><small>Управление проектами</small></div><span class="more">···</span></div>
+      </div>
+    </aside>
+
+    <main class="main-content" id="overview">
+      <header class="topbar"><div class="breadcrumb">Рабочее пространство <span>/</span> <b>Обзор</b></div><div class="top-actions"><span class="today" id="today"></span><button class="icon-button" title="Уведомления" aria-label="Уведомления">♧<i></i></button><div class="avatar small">ТП</div></div></header>
+      <section class="page-heading">
+        <div><div class="eyebrow"><span class="eyebrow-line"></span> УПРАВЛЕНИЕ ИНФРАСТРУКТУРНЫМИ ПРОЕКТАМИ</div><h1>Добрый день<span class="wave">,</span><br class="mobile-break"> ваш проектный обзор</h1><p>Все объекты, этапы и решения — в одном месте.</p></div>
+        <label class="button primary upload-button" for="fileInput"><span class="upload-symbol">↑</span> Загрузить файл</label>
+      </section>
+
+      <section class="stats-grid" aria-label="Сводка по реестру">
+        <article class="stat-card"><div class="stat-top"><span class="stat-label">Всего объектов</span><span class="stat-icon blue">⌖</span></div><div class="stat-value" id="statObjects">0</div><div class="stat-foot"><span>Уникальных адресов</span><span class="stat-dash">—</span></div></article>
+        <article class="stat-card"><div class="stat-top"><span class="stat-label">В работе</span><span class="stat-icon violet">◷</span></div><div class="stat-value" id="statActive">0</div><div class="stat-foot"><span>Активные проекты</span><span class="stat-dash">—</span></div></article>
+        <article class="stat-card"><div class="stat-top"><span class="stat-label">Построено</span><span class="stat-icon green">✓</span></div><div class="stat-value" id="statBuilt">0</div><div class="stat-foot"><span>Объекты в заказе</span><span class="stat-dash">—</span></div></article>
+        <article class="stat-card"><div class="stat-top"><span class="stat-label">Требуют внимания</span><span class="stat-icon amber">!</span></div><div class="stat-value" id="statAttention">0</div><div class="stat-foot"><span>Ожидают решения</span><span class="stat-dash">—</span></div></article>
+      </section>
+
+      <section class="workspace-grid">
+        <div class="panel registry-panel" id="registry">
+          <div class="panel-heading"><div><div class="panel-kicker">БАЗА ОБЪЕКТОВ</div><h2>Реестр объектов</h2><p>Ищите по адресу, проекту или статусу</p></div><button class="text-button" id="showAll">Все объекты <span>→</span></button></div>
+          <div class="search-row"><div class="search-box"><span class="search-icon">⌕</span><input id="searchInput" type="search" placeholder="Введите адрес или название проекта" autocomplete="off" /><kbd>⌘ K</kbd></div><button class="filter-button" id="filterButton"><span>☷</span> Фильтры</button></div>
+          <div class="filter-strip" id="filterStrip"><span>Показывать:</span><button class="filter-chip selected" data-filter="all">Все</button><button class="filter-chip" data-filter="active">В работе</button><button class="filter-chip" data-filter="built">Построено</button><button class="filter-chip" data-filter="attention">Ожидают</button></div>
+          <div class="table-wrap"><table><thead><tr><th>ОБЪЕКТ / АДРЕС</th><th>ПРОЕКТ</th><th>СТАТУС</th><th>ОБНОВЛЕНО</th><th></th></tr></thead><tbody id="objectRows"></tbody></table></div>
+          <div id="emptyState" class="empty-state"><div class="empty-illustration"><span class="empty-circle"></span><span class="empty-pin">⌖</span><span class="empty-spark spark-a">✳</span><span class="empty-spark spark-b">·</span></div><h3>Реестр пока пуст</h3><p>Загрузите файл с данными, чтобы собрать<br class="desktop-only"> историю объектов и проектов.</p><label class="button secondary" for="fileInput"><span>↑</span> Загрузить первый файл</label><small>Поддерживаются Excel, CSV и JSON</small></div>
+          <div class="table-footer" id="tableFooter"><span id="rowCount">0 объектов</span><span>Данные сохраняются в этом браузере</span></div>
+        </div>
+        <aside class="right-column">
+          <article class="panel activity-panel" id="projects"><div class="panel-heading compact"><div><div class="panel-kicker">ПОСЛЕДНИЕ ИЗМЕНЕНИЯ</div><h2>Активность</h2></div><button class="dots-button" aria-label="Еще">···</button></div><div id="activityList" class="activity-list"><div class="activity-empty"><span class="activity-empty-icon">◷</span><p>Здесь появятся события по вашим объектам</p></div></div></article>
+          <article class="upload-callout"><div class="callout-orb orb-one"></div><div class="callout-orb orb-two"></div><div class="callout-content"><div class="callout-icon">↥</div><div class="panel-kicker">БЫСТРЫЙ СТАРТ</div><h3>Соберите проекты<br>в одну базу</h3><p>Добавьте существующую таблицу — мы поможем объединить объекты по адресам.</p><label for="fileInput" class="callout-link">Импортировать данные <span>→</span></label></div><div class="callout-art"><span class="art-card card-back"></span><span class="art-card card-front"><i></i><i></i><i></i></span><span class="art-pin">⌖</span></div></article>
+        </aside>
+      </section>
+      <footer class="footer"><span>Telecom Project <span class="footer-dot">•</span> Реестр инфраструктурных объектов</span><span>Версия 1.0</span></footer>
+    </main>
+  </div>
+
+  <input id="fileInput" type="file" accept=".xlsx,.xls,.csv,.tsv,.json" hidden />
+  <div class="toast" id="toast" role="status"></div>
+  <dialog id="objectDialog" class="object-dialog"><form method="dialog"><button class="dialog-close" aria-label="Закрыть">×</button></form><div id="dialogContent"></div></dialog>
+  <dialog id="mappingDialog" class="mapping-dialog"><form method="dialog"><button class="dialog-close" aria-label="Закрыть">×</button></form><div id="mappingContent"></div></dialog>
+  <script src="app.js"></script>
+</body>
+</html>
